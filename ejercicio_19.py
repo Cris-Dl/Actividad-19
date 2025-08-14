@@ -5,8 +5,7 @@ class Galleta:
         self.peso = peso
 
     def mostrar_info(self):
-        print("Información de las galletas")
-        print(f"Nombre: {self.nombre} -- Precio:Q{self.precio} -- Peso:{self.peso}")
+        return f"Nombre: {self.nombre} -- Precio:Q{self.precio} -- Peso:{self.peso} gramos"
 
 class GalletaChispas(Galleta):
     def __init__(self, nombre, precio, peso, cantidad_chispas):
@@ -15,14 +14,14 @@ class GalletaChispas(Galleta):
 
     def mostrar_info(self):
         info_galleta = super().mostrar_info()
-        print(f"{info_galleta} -- Chispas: {self.cantidad_chispas}")
+        return f"{info_galleta} -- Chispas: {self.cantidad_chispas}"
 
 class Relleno:
     def __init__(self, sabor_relleno):
         self.sabor_relleno = sabor_relleno
 
     def describir_relleno(self):
-        print(f"El relleno de la galleta es la siguiente: {self.sabor_relleno}")
+        return f"El relleno de la galleta es la siguiente: {self.sabor_relleno}"
 
 class GalletaRellena(Galleta, Relleno):
     def __init__(self, nombre, precio, peso, sabor_relleno):
@@ -32,7 +31,7 @@ class GalletaRellena(Galleta, Relleno):
     def mostrar_info(self):
         info_galleta2 = Galleta.mostrar_info(self)
         relleno1 = Relleno.describir_relleno(self)
-        print(f"{info_galleta2} -- {relleno1}")
+        return f"{info_galleta2} -- {relleno1}"
 
 class RegistrarGalleta:
     def __init__(self):
@@ -69,15 +68,45 @@ class RegistrarGalleta:
         except Exception as e:
             print("Ha ocurrido un error, vuelva a intentar")
 
+    def agregar_galleta_relleno(self):
+        try:
+            nombre = input("Ingrese el nombre de la galleta: ")
+            precio = float(input("Ingrese el precio de la galleta: "))
+            peso = float(input("Ingrese el peso de la galleta: "))
+            sabor_relleno = input("Ingrese una breve descripción del relleno: ")
+            if precio < 0 or peso < 0:
+                raise ValueError("No se admiten números negativos, vuelva a intentar")
+            else:
+                self.lista_galletas.append(GalletaRellena(nombre, precio, peso, sabor_relleno))
+                print("Se ha agregado la galleta")
+        except ValueError:
+            print("No se admiten números negativos, vuelva a intentar")
+        except Exception as e:
+            print("Ha ocurrido un error, vuelva a intentar")
 
-class MostrarGalletas:
-    def __init__(self, lista_galletas):
-        self.lista_galletas = lista_galletas
+    def ver_galletas(self):
+        if not self.lista_galletas:
+            print("No hay galletas registradas")
+        else:
+            for i, galletas in enumerate(self.lista_galletas, start=1):
+                print(f"{i} -- {galletas.mostrar_info()}")
 
-    def mostrar_lista(self):
-        print("Lista de galletas")
+    def buscar_galleta(self):
+        nombre_galleta = input("Ingrese el nombre dee la galleta a buscar: ")
         for galleta in self.lista_galletas:
-            galleta.mostrar_info()
+            if galleta.nombre.lower() == nombre_galleta.lower():
+                print(f"Se ha encontrado la galleta {nombre_galleta}")
+                return
+        print("Galleta no encontrada")
+
+    def eliminar_galleta(self):
+        nombre_galleta = input("Ingrese el nombre de la galleta a eliminar: ")
+        for galleta in self.lista_galletas:
+            if galleta.nombre.lower() == nombre_galleta.lower():
+                self.lista_galletas.remove(galleta)
+                print("Se ha eliminado la galleta del registro")
+                return
+        print("Galleta no encontrada")
 
 galletas= RegistrarGalleta()
 
@@ -96,19 +125,27 @@ while True:
         case "1":
             print("Registrar galleta básica")
             galletas.agregar_galleta_basica()
+            print()
         case "2":
             print("Registrar galleta con chispas")
             galletas.agregar_galleta_chispas()
+            print()
         case "3":
             print("Rregistrar galleta rellena")
+            galletas.agregar_galleta_relleno()
+            print()
         case "4":
             print("Lista de galletas")
-
-
+            galletas.ver_galletas()
+            print()
         case "5":
             print("Buscar galleta por su nombre")
+            galletas.buscar_galleta()
+            print()
         case "6":
             print("Eliminar galleta")
+            galletas.eliminar_galleta()
+            print()
         case "7":
             print("Saliendo del programa, gracias por su preferencia")
             break
